@@ -1,34 +1,34 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post } from '@nestjs/common';
 import { StudentGroupService } from './student-group.service';
 import { CreateStudentGroupDto } from './dto/create-student-group.dto';
 import { UpdateStudentGroupDto } from './dto/update-student-group.dto';
 
-@Controller('student-group')
+@Controller('student-groups')
 export class StudentGroupController {
-  constructor(private readonly studentGroupService: StudentGroupService) {}
+  constructor(private readonly service: StudentGroupService) {}
 
   @Post()
-  create(@Body() createStudentGroupDto: CreateStudentGroupDto) {
-    return this.studentGroupService.create(createStudentGroupDto);
+  create(@Body() dto: CreateStudentGroupDto) {
+    return this.service.create(dto);
   }
 
   @Get()
   findAll() {
-    return this.studentGroupService.findAll();
+    return this.service.findAll();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.studentGroupService.findOne(+id);
+  findOne(@Param('id', ParseIntPipe) id: number) {
+    return this.service.findOne(id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateStudentGroupDto: UpdateStudentGroupDto) {
-    return this.studentGroupService.update(+id, updateStudentGroupDto);
+  update(@Param('id', ParseIntPipe) id: number, @Body() dto: UpdateStudentGroupDto) {
+    return this.service.update(id, dto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.studentGroupService.remove(+id);
+  remove(@Param('id', ParseIntPipe) id: number) {
+    return this.service.remove(id)
   }
 }

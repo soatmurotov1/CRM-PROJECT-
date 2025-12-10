@@ -7,7 +7,7 @@ import { StudentModule } from './modules/student/student.module';
 import { StaffModule } from './modules/staff/staff.module';
 import { GroupModule } from './modules/group/group.module';
 import { RoomModule } from './modules/room/room.module';
-import { TeacherGroupModule } from './modules/teacher-group/teacher-group.module';
+import { StudentGroupModule } from './modules/student-group/student-group.module';
 
 @Module({
   imports: [
@@ -16,11 +16,10 @@ import { TeacherGroupModule } from './modules/teacher-group/teacher-group.module
     TeacherModule, 
     CourseModule, 
     StudentModule,
-    TeacherGroupModule, 
     StaffModule,
     GroupModule, 
     RoomModule,
-    TeacherGroupModule
+    StudentGroupModule
   ],
   providers: [PrismaService],
 })

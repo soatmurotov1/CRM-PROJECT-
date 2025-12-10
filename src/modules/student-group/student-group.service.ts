@@ -1,26 +1,57 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateStudentGroupDto } from './dto/create-student-group.dto';
 import { UpdateStudentGroupDto } from './dto/update-student-group.dto';
+import { PrismaService } from 'prisma/prisma.service';
 
 @Injectable()
 export class StudentGroupService {
-  create(createStudentGroupDto: CreateStudentGroupDto) {
-    return 'This action adds a new studentGroup';
+  constructor(private prisma: PrismaService) {}
+
+  async create(dto: CreateStudentGroupDto) {
+    return this.prisma.studentGroup.create({
+      data: dto
+    })
   }
 
-  findAll() {
-    return `This action returns all studentGroup`;
+  async findAll() {
+    return this.prisma.studentGroup.findMany({
+      include: {
+        student: true,
+        group: true,
+        branch: true
+      }
+    })
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} studentGroup`;
+  async findOne(id: number) {
+    const studentGroup = await this.prisma.studentGroup.findUnique({
+      where: { id },
+      include: {
+        student: true,
+        group: true,
+        branch: true
+      }
+    })
+
+    if (!studentGroup) {
+      throw new NotFoundException(`StudentGroup with id ${id} not found`)
+    }
+    return studentGroup
   }
 
-  update(id: number, updateStudentGroupDto: UpdateStudentGroupDto) {
-    return `This action updates a #${id} studentGroup`;
+  async update(id: number, dto: UpdateStudentGroupDto) {
+    await this.findOne(id)
+    return this.prisma.studentGroup.update({
+      where: { id },
+      data: dto
+    })
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} studentGroup`;
+  async remove(id: number) {
+    await this.findOne(id)
+    await this.prisma.studentGroup.delete({
+      where: { id }
+    })
+    return { message: "StudentGroup deleted successfully"}
   }
 }

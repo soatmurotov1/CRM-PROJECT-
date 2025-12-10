@@ -115,25 +115,15 @@ model Teacher {
   updatedAt  DateTime? @updatedAt
 
   teacherGroups TeacherGroup[]
-  professions   TeacherProfession[]
 
   branch Branch @relation(fields: [branchId], references: [id])
 
   @@map("teachers")
 }
 
-model TeacherProfession {
-  id        Int     @id @default(autoincrement())
-  teacherId Int
-  profession String
-
-  teacher Teacher @relation(fields: [teacherId], references: [id])
-
-  @@unique([teacherId, profession])
-  @@map("teacher_professions")
-}
 
 model TeacherGroup {
+  id        Int       @id @default(autoincrement()) 
   teacherId Int
   branchId  Int
   groupId   Int
@@ -148,6 +138,7 @@ model TeacherGroup {
   @@unique([teacherId, groupId])
   @@map("teacherGroups")
 }
+
 
 model Student {
   id        Int       @id @default(autoincrement())

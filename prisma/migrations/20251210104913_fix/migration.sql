@@ -83,16 +83,8 @@ CREATE TABLE "teachers" (
 );
 
 -- CreateTable
-CREATE TABLE "teacher_professions" (
-    "id" SERIAL NOT NULL,
-    "teacherId" INTEGER NOT NULL,
-    "profession" TEXT NOT NULL,
-
-    CONSTRAINT "teacher_professions_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
 CREATE TABLE "teacherGroups" (
+    "id" SERIAL NOT NULL,
     "teacherId" INTEGER NOT NULL,
     "branchId" INTEGER NOT NULL,
     "groupId" INTEGER NOT NULL,
@@ -119,12 +111,15 @@ CREATE TABLE "students" (
 
 -- CreateTable
 CREATE TABLE "studentGroups" (
+    "id" SERIAL NOT NULL,
     "studentId" INTEGER NOT NULL,
     "groupId" INTEGER NOT NULL,
     "branchId" INTEGER NOT NULL,
     "status" "Status" NOT NULL DEFAULT 'ACTIVE',
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" TIMESTAMP(3)
+    "updatedAt" TIMESTAMP(3),
+
+    CONSTRAINT "studentGroups_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -163,9 +158,6 @@ CREATE UNIQUE INDEX "teachers_email_key" ON "teachers"("email");
 CREATE UNIQUE INDEX "teachers_phone_key" ON "teachers"("phone");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "teacher_professions_teacherId_profession_key" ON "teacher_professions"("teacherId", "profession");
-
--- CreateIndex
 CREATE UNIQUE INDEX "teacherGroups_teacherId_groupId_key" ON "teacherGroups"("teacherId", "groupId");
 
 -- CreateIndex
@@ -200,9 +192,6 @@ ALTER TABLE "groups" ADD CONSTRAINT "groups_branchId_fkey" FOREIGN KEY ("branchI
 
 -- AddForeignKey
 ALTER TABLE "teachers" ADD CONSTRAINT "teachers_branchId_fkey" FOREIGN KEY ("branchId") REFERENCES "branches"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "teacher_professions" ADD CONSTRAINT "teacher_professions_teacherId_fkey" FOREIGN KEY ("teacherId") REFERENCES "teachers"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "teacherGroups" ADD CONSTRAINT "teacherGroups_teacherId_fkey" FOREIGN KEY ("teacherId") REFERENCES "teachers"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
