@@ -135,7 +135,6 @@ model TeacherGroup {
   group   Group   @relation(fields: [groupId], references: [id])
   branch  Branch  @relation(fields: [branchId], references: [id])
 
-  @@unique([teacherId, groupId])
   @@map("teacherGroups")
 }
 
