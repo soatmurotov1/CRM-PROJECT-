@@ -15,23 +15,35 @@ export class AuthService {
   ) {}
 
   async register(dto: any) {
-    const existing = await this.teacherService.findByEmail(dto.email).catch(() => null);
-    if (existing) throw new BadRequestException('Email already exists');
+  const existing = await this.teacherService.findByEmail(dto.email).catch(() => null)
 
-    const created = await this.teacherService.create(dto)
+  if (existing) {
+    if (existing.status !== 'INACTIVE') {
+      const otp = Math.floor(100000 + Math.random() * 900000)
+      await this.otpService.setOtp(existing.email, otp.toString(), 600)
+      await this.mailer.sendEmail(existing.email, 'Your OTP code', otp)
+      return { message: `Siz avval ro'yxatdan o'tganingiz, yangi OTP yuborildi` }
+    }
 
-    const otp = Math.floor(100000 + Math.random() * 900000).toString()
-    await this.otpService.setOtp(created.email, otp, 600)
-    await this.mailer.sendEmail(created.email, 'Your OTP code', +otp)
-
-    return { message: 'Emailga otp yuborildi' }
+    throw new BadRequestException('Email already exists and verified')
   }
 
-  async verifyOtp(email: string, otp: string) {
-    const stored = await this.otpService.getOtp(email);
-    if (!stored) throw new BadRequestException('OTP expired or not found')
-    if (stored !== otp) throw new BadRequestException('Invalid OTP')
+  const created = await this.teacherService.create(dto)
 
+  const otp = Math.floor(100000 + Math.random() * 900000)
+  await this.otpService.setOtp(created.email, otp.toString(), 600)
+  await this.mailer.sendEmail(created.email, `Your OTP code`, otp)
+
+  return { message: `Ro'yxatdan o'tildi, emailga OTP yuborildi` }
+}
+
+
+  async verifyOtp(email: string, code: string) {
+    const stored = await this.otpService.getOtp(email)
+
+    if (!stored) throw new BadRequestException('OTP expired or not found')
+
+    if (stored !== code) throw new BadRequestException('Invalid OTP')
     await this.teacherService.markVerifiedByEmail(email)
     await this.otpService.deleteOtp(email)
 
@@ -39,7 +51,7 @@ export class AuthService {
   }
 
   async login(email: string, password: string) {
-    const teacher = await this.teacherService.findByEmail(email);
+    const teacher = await this.teacherService.findByEmail(email)
     if (!teacher) throw new UnauthorizedException('Invalid credentials')
 
     const match = await bcrypt.compare(password, teacher.password)
