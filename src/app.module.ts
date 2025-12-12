@@ -9,8 +9,14 @@ import { GroupModule } from './modules/group/group.module';
 import { RoomModule } from './modules/room/room.module';
 import { StudentGroupModule } from './modules/student-group/student-group.module';
 import { TeacherGroupModule } from './modules/teacher-group/teacher-group.module';
+import { MailerModule } from './common/mailer/mailer.module';
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
+import { AuthModule } from './modules/auth/auth.module';
+import { RedisModule } from './common/redis/redis.module';
 
 @Module({
+  controllers: [AppController],
   imports: [
     BranchModule,
     CourseModule, 
@@ -21,8 +27,11 @@ import { TeacherGroupModule } from './modules/teacher-group/teacher-group.module
     GroupModule, 
     RoomModule,
     StudentGroupModule, 
-    TeacherGroupModule
+    TeacherGroupModule,
+    MailerModule,
+    AuthModule,
+    RedisModule
   ],
-  providers: [PrismaService],
+  providers: [PrismaService, AppService]
 })
 export class AppModule {}

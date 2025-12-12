@@ -8,6 +8,15 @@ datasource db {
 }
 
 
+enum Role {
+  ADMIN
+  SUPERADMIN
+  TEACHER
+  STUDENT
+  MANAGER
+}
+
+
 enum CourseLevel {
   BEGINNER
   INTERMEDIATE
@@ -191,4 +200,17 @@ model Staff {
   branch Branch @relation(fields: [branchId], references: [id])
   @@map("staffs")
 
+}
+
+model User {
+  id        Int     @id @default(autoincrement())
+  fullName  String
+  email     String  @unique
+  phone     String
+  password  String
+  role      Role    @default(STUDENT)
+  branchId  Int
+  otpCode   String?
+  isVerified Boolean @default(false)
+  createdAt DateTime @default(now())
 }

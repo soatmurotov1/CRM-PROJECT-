@@ -1,11 +1,20 @@
-import { Controller, Post, Get, Patch, Delete, Body, Param, ParseIntPipe } from "@nestjs/common";
+import { Controller, Post, Get, Patch, Delete, Body, Param, ParseIntPipe, UseGuards, Req } from "@nestjs/common";
 import { TeacherService } from "./teacher.service";
 import { CreateTeacherDto } from "./dto/create-teacher.dto"
 import { UpdateTeacherDto } from "./dto/update-teacher.dto"
+import { Roles, RolesGuard } from "../auth/guards/role.guard";
+import { JwtAuthGuard } from "../auth/guards/auth.guard";
 
 @Controller("teachers")
 export class TeacherController {
   constructor(private readonly teacherService: TeacherService) {}
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('TEACHER')
+  @Get('profile')
+  getProfile(@Req() req) {
+    return req.user
+  }
 
   @Post()
   create(@Body() dto: CreateTeacherDto) {

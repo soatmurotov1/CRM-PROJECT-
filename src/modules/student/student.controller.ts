@@ -1,11 +1,20 @@
-import { Controller, Get, Post, Put, Delete, Body, Param, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Body, Param, ParseIntPipe, UseGuards, Req } from '@nestjs/common';
 import { StudentService } from './student.service';
 import { CreateStudentDto } from './dto/create-student.dto';
 import { UpdateStudentDto } from './dto/update-student.dto';
+import { JwtAuthGuard } from '../auth/guards/auth.guard';
+import { Roles, RolesGuard } from '../auth/guards/role.guard';
 
 @Controller("students")
 export class StudentController {
   constructor(private readonly studentService: StudentService) {}
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('STUDENT')
+  @Get('profile')
+  getProfile(@Req() req) {
+    return req.user
+  }
 
   @Post()
   create(@Body() createStudentDto: CreateStudentDto) {
